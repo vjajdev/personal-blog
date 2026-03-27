@@ -9,9 +9,10 @@ export default function Navbar({ theme, toggleTheme }) {
       </div>
       <nav className="nav-links">
         <Link to="/">Home</Link>
+        <Link to="/blog">Blog</Link>
         <Link to="/store">Store</Link>
         <Link to="/about">About Us</Link>
-        <Link to="/admin">Class / Admin</Link>
+        <Link to="/admin">Admin</Link>
       </nav>
       <div className="nav-actions">
         <button className="theme-toggle" onClick={toggleTheme}>

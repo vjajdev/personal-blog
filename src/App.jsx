@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Store from './pages/Store';
 import About from './pages/About';
 import Admin from './pages/Admin';
+import Blog from './pages/Blog';
 
 function App() {
   const [theme, setTheme] = useState('dark');
@@ -24,6 +25,7 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/store" element={<Store />} />
             <Route path="/about" element={<About />} />
             <Route path="/admin" element={<Admin />} />
