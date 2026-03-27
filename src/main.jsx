@@ -8,4 +8,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
+
+console.log("Vercel CDN Cache Busting v1");
 console.log("Cache bust v1");
