@@ -1,24 +1,40 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '../services/supabaseClient';
 
-// Mock data service simulating localStorage DB
 const mockProjects = [
-  { id: 1, title: 'Azuki Collection', desc: 'A collection of 10,000 avatars that give you membership access to The Garden.', mockImg: 'red-bg', mockTag: 'NFT' },
-  { id: 2, title: 'Design System', desc: 'Creating a comprehensive UI kit for enterprise applications.', mockImg: 'dark-bg', mockTag: 'UI/UX' },
-  { id: 3, title: 'Crypto Marketplace', desc: 'Digital marketplace for crypto collections and non-fungible tokens.', mockImg: 'cream-bg', mockTag: 'Web3' }
+  { id: '1', title: 'Azuki Collection', desc_text: 'A collection of 10,000 avatars that give you membership access to The Garden.', mock_img: 'red-bg', mock_tag: 'NFT' },
+  { id: '2', title: 'Design System', desc_text: 'Creating a comprehensive UI kit for enterprise applications.', mock_img: 'dark-bg', mock_tag: 'UI/UX' },
+  { id: '3', title: 'Crypto Marketplace', desc_text: 'Digital marketplace for crypto collections and non-fungible tokens.', mock_img: 'cream-bg', mock_tag: 'Web3' }
 ];
 
 export default function Store() {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In actual implementation, data comes from localStorage or API
-    const stored = localStorage.getItem('blog_projects');
-    if (stored) {
-      setProjects(JSON.parse(stored));
-    } else {
-      setProjects(mockProjects);
-      localStorage.setItem('blog_projects', JSON.stringify(mockProjects));
+    async function fetchProjects() {
+      if (!supabase) {
+        console.warn("No Supabase connection. Using mock data.");
+        setProjects(mockProjects);
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching projects:', error);
+        setProjects(mockProjects);
+      } else {
+        setProjects(data || []);
+      }
+      setLoading(false);
     }
+
+    fetchProjects();
   }, []);
 
   return (
@@ -29,20 +45,25 @@ export default function Store() {
           Discover <span className="text-secondary">Rare<br/>Collections Of</span><br/>NFTs.
         </h2>
         <p className="subtitle">Digital marketplace for crypto collections and non-fungible tokens NFTs.</p>
+        {!supabase && <p style={{color: 'orange', fontSize: '0.8rem', marginTop: '1rem'}}>Demo Mode: Supabase not connected.</p>}
       </div>
 
-      <div className="projects-grid">
-        {projects.map(p => (
-          <div key={p.id} className="project-card">
-            <div className={`project-img ${p.mockImg}`}></div>
-            <div className="project-info">
-              <span className="project-tag">{p.mockTag}</span>
-              <h3>{p.title} ↗</h3>
-              <p>{p.desc}</p>
+      {loading ? (
+        <p>Loading projects...</p>
+      ) : (
+        <div className="projects-grid">
+          {projects.map(p => (
+            <div key={p.id} className="project-card">
+              <div className={`project-img ${p.mock_img || 'dark-bg'}`}></div>
+              <div className="project-info">
+                <span className="project-tag">{p.mock_tag || 'Project'}</span>
+                <h3>{p.title} ↗</h3>
+                <p>{p.desc_text}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
