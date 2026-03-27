@@ -7,6 +7,15 @@
     <title>Personal Blog & Portfolio</title>
   </head>
   <body>
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        document.body.innerHTML = '<div style="color:red; padding: 20px; font-family: monospace;"><h1>Crucial Error Detected</h1><p>' + msg + '</p><p>' + url + ':' + line + '</p></div>';
+        return false;
+      };
+      window.addEventListener('unhandledrejection', function(event) {
+        document.body.innerHTML = '<div style="color:red; padding: 20px; font-family: monospace;"><h1>Unhandled Promise Rejection</h1><p>' + event.reason + '</p></div>';
+      });
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
